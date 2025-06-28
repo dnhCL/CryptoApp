@@ -1,3 +1,4 @@
+import os
 from core.config import crear_cliente
 from core.binance_utils import (
     obtener_balances_activos,
@@ -5,7 +6,6 @@ from core.binance_utils import (
     calcular_precios_entrada,
 )
 from core.rendimiento import calcular_rendimiento_por_token
-from core.analisis_portafolio import analizar_portafolio
 
 def obtener_estado_portafolio():
     client = crear_cliente()
@@ -18,10 +18,17 @@ def obtener_estado_portafolio():
         precios_entrada["SHIB"] = 0.00001669
 
     rendimientos = calcular_rendimiento_por_token(balances, precios_actuales, precios_entrada)
-    analisis = analizar_portafolio()
+
+    # Análisis técnico solo si existe la base de datos
+    comportamiento = []
+    if os.path.exists("precios.db"):
+        from core.analisis_portafolio import analizar_portafolio
+        comportamiento = analizar_portafolio()
+    else:
+        comportamiento = [{"info": "Base de datos histórica no disponible en entorno actual."}]
 
     return {
         "rendimientos": rendimientos,
-        "comportamiento": analisis,
+        "comportamiento": comportamiento,
         "total": total_portafolio
     }
