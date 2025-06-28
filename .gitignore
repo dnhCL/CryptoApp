@@ -1,0 +1,15 @@
+# Entornos virtuales
+env/
+venv/
+__pycache__/
+
+# Archivos de entorno
+.env
+
+# Bases de datos locales
+precios.db
+precios_entrada.json
+
+# Otros archivos temporales
+*.pyc
+.DS_Store
