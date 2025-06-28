@@ -1,62 +1,83 @@
 import sqlite3
-import time
 from datetime import datetime
-from config import crear_cliente
-from binance_utils import obtener_balances_activos
+from binance.spot import Spot
+import time
 
-# Configuración
+client = Spot()
+
 DB_PATH = "precios.db"
 INTERVALO = "1h"
 LIMITE = 1000
 
-# Crear cliente Binance
-client = crear_cliente()
+def crear_db():
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS precios_historicos (
+        token TEXT,
+        timestamp TEXT,
+        open REAL,
+        high REAL,
+        low REAL,
+        close REAL,
+        volume REAL,
+        PRIMARY KEY (token, timestamp)
+    )
+    """)
+    conn.commit()
+    conn.close()
 
-# Obtener tokens con saldo
-balances = obtener_balances_activos(client)
-tokens = [b["asset"] for b in balances if b["asset"] != "USDT"]
-
-# Conectar a DB y preparar tabla
-conn = sqlite3.connect(DB_PATH)
-cursor = conn.cursor()
-
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS precios_historicos (
-    token TEXT,
-    timestamp DATETIME,
-    open REAL,
-    high REAL,
-    low REAL,
-    close REAL,
-    volume REAL,
-    PRIMARY KEY (token, timestamp)
-);
-""")
-conn.commit()
-
-# Descargar y guardar klines por token
-for symbol in tokens:
-    pair = f"{symbol}USDT"
+def descargar_guardar_klines(token_base):
+    symbol = f"{token_base}USDT"
     try:
-        klines = client.klines(symbol=pair, interval=INTERVALO, limit=LIMITE)
+        klines = client.klines(symbol=symbol, interval=INTERVALO, limit=LIMITE)
     except Exception as e:
-        print(f"[!] Error al obtener {pair}: {e}")
-        continue
+        print(f"❌ Error al obtener datos de {symbol}: {e}")
+        return
 
-    count = 0
+    registros = []
     for k in klines:
-        timestamp = datetime.fromtimestamp(k[0] / 1000)
-        open_, high, low, close, volume = float(k[1]), float(k[2]), float(k[3]), float(k[4]), float(k[5])
+        timestamp = datetime.utcfromtimestamp(k[0] / 1000).strftime("%Y-%m-%d %H:%M:%S")
+        registros.append((
+            token_base,  # ✅ Guardar solo el token base, no el par completo
+            timestamp,
+            float(k[1]),  # open
+            float(k[2]),  # high
+            float(k[3]),  # low
+            float(k[4]),  # close
+            float(k[5])   # volume
+        ))
 
-        cursor.execute("""
-        INSERT OR IGNORE INTO precios_historicos (token, timestamp, open, high, low, close, volume)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-        """, (pair, timestamp, open_, high, low, close, volume))
-        count += 1
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+
+    nuevos = 0
+    for r in registros:
+        try:
+            cursor.execute("""
+            INSERT INTO precios_historicos (token, timestamp, open, high, low, close, volume)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, r)
+            nuevos += 1
+        except sqlite3.IntegrityError:
+            continue
 
     conn.commit()
-    print(f"[✓] {pair} guardado ({count} registros)")
-    time.sleep(0.5)  # para evitar límite de API
+    conn.close()
+    print(f"✅ {token_base}USDT: {nuevos} registros nuevos añadidos.")
 
-conn.close()
-print("\n✅ Finalizado.")
+def actualizar_todos_los_tokens(tokens):
+    crear_db()
+    for token in tokens:
+        descargar_guardar_klines(token)
+        time.sleep(0.5)
+
+def actualizar_db_desde_main():
+    mis_tokens = [
+        "SHIB", "ADA", "TRX", "THETA", "FET", "ONE", "WIN", "EUR",
+        "LUNA", "CAKE", "LUNC", "WLD", "NOT", "ACT"
+    ]
+    actualizar_todos_los_tokens(mis_tokens)
+
+if __name__ == "__main__":
+    actualizar_db_desde_main()
