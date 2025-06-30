@@ -53,6 +53,14 @@ if __name__ == "__main__":
     else:
         anterior, actual = snapshots[-2], snapshots[-1]
         print(f"\n📚 Comparando: {anterior['archivo']} ⟶ {actual['archivo']}")
+
+        if "valor_total_portafolio" in anterior and "valor_total_portafolio" in actual:
+            v_anterior = anterior["valor_total_portafolio"]
+            v_actual = actual["valor_total_portafolio"]
+            variacion = round(v_actual - v_anterior, 2)
+            pct = round((variacion / v_anterior) * 100, 2) if v_anterior else 0
+            print(f"💼 Patrimonio total: {v_anterior} → {v_actual} USDT  ({'+' if variacion >=0 else ''}{variacion} USDT, {pct}%)")
+
         diferencias = comparar_snapshots(anterior, actual)
         print("\n📈 Cambios técnicos detectados:\n")
         print(tabulate(diferencias, headers="keys", tablefmt="fancy_grid"))

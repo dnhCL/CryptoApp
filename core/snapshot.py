@@ -3,6 +3,8 @@ import json
 from datetime import datetime
 from core.analisis_portafolio import analizar_portafolio
 from core.resumen_db import resumen_por_token
+from core.servicio import obtener_estado_portafolio
+
 
 SNAPSHOT_DIR = "snapshots"
 
@@ -17,8 +19,10 @@ def guardar_snapshot_actual():
     analisis = analizar_portafolio()
     resumen = resumen_por_token()
 
+    datos = obtener_estado_portafolio()  # 🆕 obtenemos el total
     snapshot = {
         "timestamp": timestamp,
+        "valor_total_portafolio": datos["total"],  # 🆕 se guarda el valor total aquí
         "base_historica": resumen.to_dict(orient="records"),
         "analisis_tecnico": analisis
     }
