@@ -1,17 +1,40 @@
-📌 Resumen guardado:
+🧭 Recomendación Estratégica – 2025-07-01 (mañana)
+1. ✅ Acción de Toma de Ganancia: TRX
+🎯 Monto sugerido a retirar: 5 USDT
 
-TRX es el token líder actual (mantener o considerar aumentar).
+🔍 Justificación:
 
-Oportunidad técnica también en CAKE, FET y ONE.
+MACD cruzó a bajista
 
-Evaluar reducción en LUNA, THETA, ACT, WLD.
+RSI bajó de sobrecompra (70.36 → 52.80)
 
-Supervisar posibles caídas adicionales en tokens con MACD recién bajista.
+Precio cruzó bajo EMA20
 
-Cuando estés listo más tarde o mañana, solo dime y:
+💡 Esta operación captura ~42% de la ganancia acumulada, reduciendo exposición sin cerrar la posición.
 
-Cargamos el nuevo snapshot.
+2. 📥 Resultado: 5 USDT libres para reinversión
+Estos fondos quedarán disponibles para ser reasignados.
 
-Comparamos con este.
+No hay destino inmediato recomendado aún.
 
-Ajustamos según evolución técnica real.
+🔄 Evaluación programada en 12h para analizar:
+
+Nuevos puntos de entrada potencial
+
+Cambio técnico favorable en activos en seguimiento (ej. ADA, FET, SHIB)
+
+3. 🧭 Seguimiento técnico para próxima sesión
+Tokens a observar por posible entrada o reversión técnica:
+
+ADA, SHIB, FET: necesitan confirmar consolidación (buscar MACD alcista, RSI>45)
+
+EUR: mantener como cobertura, pero sin momentum actual de compra.
+
+CAKE, WLD, LUNA: descartar de momento, sin señales favorables.
+
+📌 Conclusión
+Ejecutar venta parcial de TRX por 5 USDT
+
+Dejar ese capital en reserva
+
+Revaluar su destino dentro de 12h según evolución técnica
